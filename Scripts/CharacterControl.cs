@@ -9,7 +9,7 @@ namespace Moonrider
 
         public float Speed;
         public Animator animator;
-
+        public Material material;
         public enum TransitionParameter {
             Move,
         }
@@ -30,7 +30,7 @@ namespace Moonrider
                 animator.SetBool(TransitionParameter.Move.ToString(), false);
             }
 
-                if (VirtualInputManager.Instance.moveRight)
+                 if (VirtualInputManager.Instance.moveRight)
             {
                 this.gameObject.transform.Translate(Vector3.forward * Speed * Time.deltaTime); // the script is attached to this game object -> will move forward. Time.deltaTime will be used to negate the
                                                                                              // time difference between each frame
@@ -46,5 +46,26 @@ namespace Moonrider
                 animator.SetBool(TransitionParameter.Move.ToString(), true);
             }
         }
+
+        public void ChangeMaterial()
+        {
+
+            if (material == null)
+            {
+                Debug.LogError("No material specified");
+            }
+
+            Renderer[] arrMaterials = this.gameObject.GetComponentsInChildren<Renderer>();
+
+            foreach (Renderer r in arrMaterials)
+            {
+                if (r.gameObject != this.gameObject)
+                {
+                    r.material = material;
+                }
+                
+            }
+        }
+
     }
 }
