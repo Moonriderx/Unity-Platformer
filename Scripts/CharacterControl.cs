@@ -10,13 +10,16 @@ namespace Moonrider
         public float Speed;
         public Animator animator;
         public Material material;
-        public enum TransitionParameter {
+        public bool moveRight;
+        public bool moveLeft;
+        public enum TransitionParameter
+        {
             Move,
         }
 
         // Since this is 2.5d we are going to mainly playing around "y" axis. 0 means we are going forward --> 180 means we are going backwards <--
-       
-      
+
+
 
         public void ChangeMaterial()
         {
@@ -34,7 +37,7 @@ namespace Moonrider
                 {
                     r.material = material;
                 }
-                
+
             }
         }
 
