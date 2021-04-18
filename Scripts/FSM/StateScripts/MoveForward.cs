@@ -9,8 +9,12 @@ namespace Moonrider
     {
         public float Speed;
 
+        public override void OnEnter(CharacterState characterState, Animator animator, AnimatorStateInfo stateInfo)
+        {
+            
+        }
 
-        public override void UpdateAbility(CharacterState characterStateBase, Animator animator)
+        public override void UpdateAbility(CharacterState characterStateBase, Animator animator, AnimatorStateInfo stateInfo)
         {
             CharacterControl control = characterStateBase.GetCharacterControl(animator);
 
@@ -45,6 +49,11 @@ namespace Moonrider
                 control.transform.rotation = Quaternion.Euler(0f, 180f, 0f); // Character turns (rotates) toward the running direction
 
             }
+        }
+
+        public override void OnExit(CharacterState characterState, Animator animator, AnimatorStateInfo stateInfo)
+        {
+            
         }
     }
 }

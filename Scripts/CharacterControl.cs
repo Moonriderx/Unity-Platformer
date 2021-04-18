@@ -12,9 +12,10 @@ namespace Moonrider
         public Material material;
         public bool moveRight;
         public bool moveLeft;
+        public bool Jump;
         public enum TransitionParameter
         {
-            Move,
+            Move, Jump, ForceTransition
         }
 
         // Since this is 2.5d we are going to mainly playing around "y" axis. 0 means we are going forward --> 180 means we are going backwards <--

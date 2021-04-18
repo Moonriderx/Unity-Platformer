@@ -31,6 +31,15 @@ namespace Moonrider
             {
                 characterControl.moveLeft = false;
             }
+
+            if (VirtualInputManager.Instance.Jump)
+            {
+                characterControl.Jump = true;
+            } 
+            else
+            {
+                characterControl.Jump = false;
+            }
         }
     }
 }

@@ -8,17 +8,34 @@ namespace Moonrider
     {
         public List<StateData> ListAbilityData = new List<StateData>(); // This script will contains a list of the state data 
 
-        public void UpdateAll(CharacterState characterStateBase, Animator animator) // We want this to go through the list and update every single one of them
+
+        public void UpdateAll(CharacterState characterStateBase, Animator animator, AnimatorStateInfo stateInfo) // We want this to go through the list and update every single one of them
         {
             foreach (StateData d in ListAbilityData)
             {
-                d.UpdateAbility(characterStateBase, animator);
+                d.UpdateAbility(characterStateBase, animator, stateInfo);
+            }
+        }
+
+        public override void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
+        {
+            foreach (StateData d in ListAbilityData)
+            {
+                d.OnEnter(this, animator, stateInfo);
             }
         }
 
         public override void OnStateUpdate(Animator animator, AnimatorStateInfo stateInfo, int layerIndex) // Update it every single frame
         {
-            UpdateAll(this, animator);
+            UpdateAll(this, animator, stateInfo);
+        }
+
+        public override void OnStateExit(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
+        {
+            foreach (StateData d in ListAbilityData)
+            {
+                d.OnExit(this, animator, stateInfo);
+            }
         }
 
         private CharacterControl characterControl; // Every state will be able to access the characterControl script

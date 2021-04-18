@@ -8,5 +8,6 @@ namespace Moonrider
 
         public bool moveRight;
         public bool moveLeft;
+        public bool Jump;
     }
 }
