@@ -38,19 +38,24 @@ namespace Moonrider
 
         bool IsGrounded(CharacterControl control)
         {
-            if (control.RIGID_BODY.velocity.y > -0.01f && control.RIGID_BODY.velocity.y <= 0f) // if the character velocity is 0, that means the character does not fall (he has hit the ground)
+            if (control.RIGID_BODY.velocity.y > -0.001f && control.RIGID_BODY.velocity.y <= 0f) // if the character velocity is 0, that means the character does not fall (he has hit the ground)
                 // Since velocity is float value, it would not be exactly 0 most of the times
             {
                 return true;
             }
-            foreach(GameObject o in control.BottomSpheres) // for each of the spheres, do a raycast 
+
+            if (control.RIGID_BODY.velocity.y < 0f) // we should only cast raycast if the character is falling
             {
-                Debug.DrawRay(o.transform.position, -Vector3.up * 0.7f, Color.yellow);
-                RaycastHit hit;
-                if (Physics.Raycast(o.transform.position, -Vector3.up, out hit, Distance)) // we shoot the ray from our spheres down
+                foreach (GameObject o in control.BottomSpheres) // for each of the spheres, do a raycast 
                 {
-                    return true;
+                    Debug.DrawRay(o.transform.position, -Vector3.up * 0.7f, Color.yellow);
+                    RaycastHit hit;
+                    if (Physics.Raycast(o.transform.position, -Vector3.up, out hit, Distance)) // we shoot the ray from our spheres down
+                    {
+                        return true;
+                    }
                 }
+
             }
             return false;
         }

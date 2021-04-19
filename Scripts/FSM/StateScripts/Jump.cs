@@ -11,6 +11,7 @@ namespace Moonrider
         public override void OnEnter(CharacterState characterState, Animator animator, AnimatorStateInfo stateInfo)
         {
             characterState.GetCharacterControl(animator).RIGID_BODY.AddForce(Vector3.up * JumpForce);
+            animator.SetBool(CharacterControl.TransitionParameter.Grounded.ToString(), false); // when we first enter jump state, grounded bool should be false;
         }
         public override void UpdateAbility(CharacterState characterState, Animator animator, AnimatorStateInfo stateInfo)
         {

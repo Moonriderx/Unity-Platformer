@@ -14,6 +14,7 @@ namespace Moonrider
         public bool Jump;
         public GameObject ColliderEdgePrefab;
         public List<GameObject> BottomSpheres = new List<GameObject>(); // The list will hold the game objects bottomsphere. We will use them for Ground Detection
+        public List<GameObject> FrontSpheres = new List<GameObject>(); // Front Spheres info list
 
         private Rigidbody rigid;
         public Rigidbody RIGID_BODY
@@ -46,23 +47,36 @@ namespace Moonrider
 
             GameObject bottomFront = CreateEdgeSphere(new Vector3(0f, bottom, front));
             GameObject bottomBack = CreateEdgeSphere(new Vector3(0f, bottom, back));
+            GameObject topFront = CreateEdgeSphere(new Vector3(0f, top, front));
 
             bottomFront.transform.parent = this.transform; // spawn the instanciated game objects as the chield to the player
             bottomBack.transform.parent = this.transform;
+            topFront.transform.parent = this.transform;
 
             BottomSpheres.Add(bottomFront); // add them to the list
             BottomSpheres.Add(bottomBack);
+            FrontSpheres.Add(bottomFront);
+            FrontSpheres.Add(topFront);
 
             //float sec = (bottomFront.transform.position - bottomBack.transform.position).magnitude; // the vector in between spheres for one section
-            float sec = (bottomFront.transform.position - bottomBack.transform.position).magnitude / 5f; // the length for single section of all 5 sections
+            float horSec = (bottomFront.transform.position - bottomBack.transform.position).magnitude / 5f; // the length for single section of all 5 sections (horizontal)
+            CreateMiddleSpheres(bottomFront, -this.transform.forward, horSec, 4, BottomSpheres);
+            float verSec = (bottomFront.transform.position - topFront.transform.position).magnitude / 10f; // the length for single section of all 10 sections (vertical)
+            CreateMiddleSpheres(bottomFront, this.transform.up, verSec, 9 , FrontSpheres);
 
-            for (int i = 0; i < 4; i++)
+
+
+        }
+
+        public void CreateMiddleSpheres(GameObject start, Vector3 dir, float sec, int iterations, List<GameObject> spheresList)
+        {
+            for (int i = 0; i < iterations; i++)
             {
-                Vector3 pos = bottomBack.transform.position + (Vector3.forward * sec * (i + 1)); // each of the position is going to be starting from the back. bottomBack * 1, bottomBack * 2, bottomBack * 3 etc....
+                Vector3 pos = start.transform.position + (dir * sec * (i + 1)); // each of the position is going to be starting from the back. bottomBack * 1, bottomBack * 2, bottomBack * 3 etc....
 
                 GameObject newObj = CreateEdgeSphere(pos);
                 newObj.transform.parent = this.transform;
-                BottomSpheres.Add(newObj);
+                spheresList.Add(newObj);
             }
         }
 

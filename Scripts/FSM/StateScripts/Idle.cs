@@ -9,7 +9,7 @@ namespace Moonrider
 
         public override void OnEnter(CharacterState characterState, Animator animator, AnimatorStateInfo stateInfo)
         {
-           
+            animator.SetBool(CharacterControl.TransitionParameter.Jump.ToString(), false);
         }
         public override void UpdateAbility(CharacterState characterState, Animator animator, AnimatorStateInfo stateInfo)
         {
