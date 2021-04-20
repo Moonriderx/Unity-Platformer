@@ -16,8 +16,13 @@ namespace Moonrider
         public List<GameObject> BottomSpheres = new List<GameObject>(); // The list will hold the game objects bottomsphere. We will use them for Ground Detection
         public List<GameObject> FrontSpheres = new List<GameObject>(); // Front Spheres info list
 
+        public float GravityMultiplier;
+        public float PullMultiplier;
+
         private Rigidbody rigid;
         public Rigidbody RIGID_BODY
+
+            
         {
             get
             {
@@ -66,6 +71,20 @@ namespace Moonrider
 
 
 
+        }
+
+        private void FixedUpdate()
+        {
+            if (RIGID_BODY.velocity.y < 0f) // that means the player is falling
+
+            {
+                RIGID_BODY.velocity += (-Vector3.up * GravityMultiplier); // Make animationCurve in jump script for better control
+            }
+
+            if (RIGID_BODY.velocity.y > 0f & !Jump )// if the player is going up and if we release the jump button
+            {
+                RIGID_BODY.velocity += (-Vector3.up * PullMultiplier);
+            }
         }
 
         public void CreateMiddleSpheres(GameObject start, Vector3 dir, float sec, int iterations, List<GameObject> spheresList)

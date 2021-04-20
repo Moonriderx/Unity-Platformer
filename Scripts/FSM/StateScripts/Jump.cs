@@ -7,6 +7,8 @@ namespace Moonrider
     public class Jump : StateData
     {
         public float JumpForce;
+        public AnimationCurve Gravity;
+        public AnimationCurve Pull;
 
         public override void OnEnter(CharacterState characterState, Animator animator, AnimatorStateInfo stateInfo)
         {
@@ -15,7 +17,10 @@ namespace Moonrider
         }
         public override void UpdateAbility(CharacterState characterState, Animator animator, AnimatorStateInfo stateInfo)
         {
+            CharacterControl control = characterState.GetCharacterControl(animator);
 
+            control.GravityMultiplier = Gravity.Evaluate(stateInfo.normalizedTime); // affect the animation curve 
+            control.PullMultiplier = Pull.Evaluate(stateInfo.normalizedTime);
         }
         public override void OnExit(CharacterState characterState, Animator animator, AnimatorStateInfo stateInfo)
         {
