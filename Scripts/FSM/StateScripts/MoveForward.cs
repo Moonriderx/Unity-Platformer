@@ -40,13 +40,15 @@ namespace Moonrider
 
             if (control.moveRight)
             {
+
+                control.transform.rotation = Quaternion.Euler(0f, 0f, 0f); // Character turns (rotates) toward the running direction
                 //this.gameObject.transform.Translate(Vector3.forward * Speed * Time.deltaTime); // the script is attached to this game object -> will move forward. Time.deltaTime will be used to negate the
                 // time difference between each frame
                 // However, it will not work here, because this script has no access to the game object. Instead use this ->
                 if (!CheckFront(control)) // we only wanna move when CheckFront is false -> when there is nothing in front
                 {
                     control.transform.Translate(Vector3.forward * Speed * SpeedGraph.Evaluate(stateInfo.normalizedTime) * Time.deltaTime);
-                    control.transform.rotation = Quaternion.Euler(0f, 0f, 0f); // Character turns (rotates) toward the running direction
+                    
                 }
 
              
@@ -55,10 +57,11 @@ namespace Moonrider
 
             if (control.moveLeft) // if we inherit from VirtualInputManager, when we add NPCs they will move too, so we inherit from CharacterControl script
             {
+                control.transform.rotation = Quaternion.Euler(0f, 180f, 0f); // Character turns (rotates) toward the running direction
                 if (!CheckFront(control))
                 {
                     control.transform.Translate(Vector3.forward * Speed * SpeedGraph.Evaluate(stateInfo.normalizedTime) * Time.deltaTime); // the script is attached to this game object -> will move backwards.
-                    control.transform.rotation = Quaternion.Euler(0f, 180f, 0f); // Character turns (rotates) toward the running direction
+                    
 
                 }
             }
