@@ -10,6 +10,7 @@ namespace Moonrider
         public float Speed;
         public AnimationCurve SpeedGraph;
         public float BlockDistance;
+        private bool Self;
 
         public override void OnEnter(CharacterState characterState, Animator animator, AnimatorStateInfo stateInfo)
         {
@@ -74,14 +75,28 @@ namespace Moonrider
 
         bool CheckFront(CharacterControl control)
         {
-           
+            
             foreach (GameObject o in control.FrontSpheres) // for each of the spheres in the list, do a raycast 
             {
+                Self = false;
                 Debug.DrawRay(o.transform.position, control.transform.forward * 0.3f, Color.yellow);
                 RaycastHit hit;
                 if (Physics.Raycast(o.transform.position, control.transform.forward, out hit, BlockDistance)) // we shoot the ray from our spheres in front
                 {
-                    return true;
+                    foreach(Collider c in control.RagdollParts) // whenever the raycast hit an object, we check if the object belongs to the player
+                    {
+                       if (c.gameObject == hit.collider.gameObject) // if it is the same gameobject as what the raycast is hitting
+                        {
+                            Self = true; // if the raycast is hitting the player itself
+                            break;
+                        }
+                    }
+                    if (!Self)
+                    {
+                        return true;
+                    }
+
+          
                 }
             }
             return false;

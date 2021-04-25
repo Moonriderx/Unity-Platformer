@@ -15,6 +15,7 @@ namespace Moonrider
         public GameObject ColliderEdgePrefab;
         public List<GameObject> BottomSpheres = new List<GameObject>(); // The list will hold the game objects bottomsphere. We will use them for Ground Detection
         public List<GameObject> FrontSpheres = new List<GameObject>(); // Front Spheres info list
+        public List<Collider> RagdollParts = new List<Collider>(); // we put all the ragdoll parts into the list
 
         public float GravityMultiplier;
         public float PullMultiplier;
@@ -43,8 +44,54 @@ namespace Moonrider
 
         private void Awake() // as soon as the game starts look for the box collider on the character controller
         {
+            SetRagdollParts();
+            SetColliderSphere();
+        }
+
+        /*private IEnumerator Start() // Only for testing purposes
+        {
+            yield return new WaitForSeconds(5f);
+            RIGID_BODY.AddForce(200f * Vector3.up);
+            yield return new WaitForSeconds(0.5f);
+            TurnOnRagdoll();
+        }*/
+
+        private void SetRagdollParts()
+        {
+            Collider[] colliders = this.gameObject.GetComponentsInChildren<Collider>(); // will give us all the colliders in the hierarchy of the game object
+
+            foreach(Collider c in colliders)
+            {
+                if (c.gameObject != this.gameObject) // if the collider we found is not the same as what is in the character control
+                {
+                    c.isTrigger = true; // it means the collider will not be a physical object anymore (we turn the collider into a trigger)
+                    RagdollParts.Add(c); // add the parts in to the list
+                }
+            }
+
+        }
+
+        public void TurnOnRagdoll()
+        {
+            RIGID_BODY.useGravity = false;
+            RIGID_BODY.velocity = Vector3.zero;
+
+            this.gameObject.GetComponent<BoxCollider>().enabled = false;
+            animator.enabled = false;
+            animator.avatar = null;
+
+            foreach(Collider c in RagdollParts)
+            {
+                c.isTrigger = false;
+                c.attachedRigidbody.velocity = Vector3.zero;
+            }
+        }
+
+
+        private void SetColliderSphere()
+        {
             BoxCollider box = GetComponent<BoxCollider>(); // find the collider attached to player and find the four sides of it.
-            
+
             float bottom = box.bounds.center.y - box.bounds.extents.y; // bottom position of the collider (head)
             float top = box.bounds.center.y + box.bounds.extents.y; // top position of the collider (feet)
             float front = box.bounds.center.z + box.bounds.extents.z; // front position (torso front)
@@ -67,9 +114,7 @@ namespace Moonrider
             float horSec = (bottomFront.transform.position - bottomBack.transform.position).magnitude / 5f; // the length for single section of all 5 sections (horizontal)
             CreateMiddleSpheres(bottomFront, -this.transform.forward, horSec, 4, BottomSpheres);
             float verSec = (bottomFront.transform.position - topFront.transform.position).magnitude / 10f; // the length for single section of all 10 sections (vertical)
-            CreateMiddleSpheres(bottomFront, this.transform.up, verSec, 9 , FrontSpheres);
-
-
+            CreateMiddleSpheres(bottomFront, this.transform.up, verSec, 9, FrontSpheres);
 
         }
 
