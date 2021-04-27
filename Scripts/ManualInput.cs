@@ -40,6 +40,15 @@ namespace Moonrider
             {
                 characterControl.Jump = false;
             }
+
+            if (VirtualInputManager.Instance.Attack)
+            {
+                characterControl.Attack = true;
+            }
+            else
+            {
+                characterControl.Attack = false;
+            }
         }
     }
 }

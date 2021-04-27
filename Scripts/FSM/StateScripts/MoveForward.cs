@@ -7,10 +7,12 @@ namespace Moonrider
     [CreateAssetMenu(fileName = "New State", menuName = "Moonrider/AbilityData/MoveForward")]
     public class MoveForward : StateData
     {
+        public bool Constant;
         public float Speed;
         public AnimationCurve SpeedGraph;
         public float BlockDistance;
-        private bool Self;
+
+        
 
         public override void OnEnter(CharacterState characterState, Animator animator, AnimatorStateInfo stateInfo)
         {
@@ -26,6 +28,33 @@ namespace Moonrider
                 animator.SetBool(CharacterControl.TransitionParameter.Jump.ToString(), true);
             }
 
+            if (Constant) // if we toggled constant bool in our scriptable object "LeadJab_MoveForward, we are going to move in a certain way (by pressing enter)
+            {
+                ConstantMove(control, animator, stateInfo);
+            }
+            else
+            {
+                ControlledMove(control, animator, stateInfo); // move with the keyboard
+            }
+
+            
+        }
+
+        public override void OnExit(CharacterState characterState, Animator animator, AnimatorStateInfo stateInfo)
+        {
+            
+        }
+
+        private void ConstantMove(CharacterControl control, Animator animator, AnimatorStateInfo stateInfo)
+        {
+            if (!CheckFront(control))
+            {
+                control.transform.Translate(Vector3.forward * Speed * SpeedGraph.Evaluate(stateInfo.normalizedTime) * Time.deltaTime);
+            }
+        }
+
+        private void ControlledMove(CharacterControl control, Animator animator, AnimatorStateInfo stateInfo)
+        {
             if (control.moveLeft && control.moveRight)
             {
                 animator.SetBool(CharacterControl.TransitionParameter.Move.ToString(), false); // if the character is not moving
@@ -49,10 +78,10 @@ namespace Moonrider
                 if (!CheckFront(control)) // we only wanna move when CheckFront is false -> when there is nothing in front
                 {
                     control.transform.Translate(Vector3.forward * Speed * SpeedGraph.Evaluate(stateInfo.normalizedTime) * Time.deltaTime);
-                    
+
                 }
 
-             
+
 
             }
 
@@ -62,15 +91,10 @@ namespace Moonrider
                 if (!CheckFront(control))
                 {
                     control.transform.Translate(Vector3.forward * Speed * SpeedGraph.Evaluate(stateInfo.normalizedTime) * Time.deltaTime); // the script is attached to this game object -> will move backwards.
-                    
+
 
                 }
             }
-        }
-
-        public override void OnExit(CharacterState characterState, Animator animator, AnimatorStateInfo stateInfo)
-        {
-            
         }
 
         bool CheckFront(CharacterControl control)
@@ -78,26 +102,41 @@ namespace Moonrider
             
             foreach (GameObject o in control.FrontSpheres) // for each of the spheres in the list, do a raycast 
             {
-                Self = false;
+                
                 Debug.DrawRay(o.transform.position, control.transform.forward * 0.3f, Color.yellow);
                 RaycastHit hit;
                 if (Physics.Raycast(o.transform.position, control.transform.forward, out hit, BlockDistance)) // we shoot the ray from our spheres in front
                 {
-                    foreach(Collider c in control.RagdollParts) // whenever the raycast hit an object, we check if the object belongs to the player
+                    if (!control.RagdollParts.Contains(hit.collider)) // if the list does not contain the collider
                     {
-                       if (c.gameObject == hit.collider.gameObject) // if it is the same gameobject as what the raycast is hitting
+                        if (!IsBodyPart(hit.collider)) // even if the front raycast hits something infront, we wanna make sure that is not a body part
                         {
-                            Self = true; // if the raycast is hitting the player itself
-                            break;
+                            return true;
                         }
+                        
                     }
-                    if (!Self)
-                    {
-                        return true;
-                    }
-
-          
+                                             
                 }
+            }
+            return false;
+        }
+
+        bool IsBodyPart(Collider col)
+        {
+            CharacterControl control = col.transform.root.GetComponent<CharacterControl>(); // look at the character control that is attached to the collider ( the root of the collider )
+            if (control == null) // that means that is not a body part
+            {
+                return false;
+            }
+
+            if (control.gameObject == col.gameObject) // if the collider is character control itself -> Thats mean it is not a body part. It is the root of the character
+            {
+                return false;
+            }
+
+            if (control.RagdollParts.Contains(col)) // make sure that it is not in the list of the ragdol parts
+            {
+                return true;
             }
             return false;
         }

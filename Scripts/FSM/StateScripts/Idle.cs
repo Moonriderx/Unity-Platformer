@@ -15,6 +15,11 @@ namespace Moonrider
         {
             CharacterControl control = characterState.GetCharacterControl(animator);
 
+            if (control.Attack)
+            {
+                animator.SetBool(CharacterControl.TransitionParameter.Attack.ToString(), true);
+            }
+
 
             if (control.Jump)
             {

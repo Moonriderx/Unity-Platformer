@@ -12,6 +12,7 @@ namespace Moonrider
         public bool moveRight;
         public bool moveLeft;
         public bool Jump;
+        public bool Attack;
         public GameObject ColliderEdgePrefab;
         public List<GameObject> BottomSpheres = new List<GameObject>(); // The list will hold the game objects bottomsphere. We will use them for Ground Detection
         public List<GameObject> FrontSpheres = new List<GameObject>(); // Front Spheres info list
@@ -36,7 +37,7 @@ namespace Moonrider
         }
         public enum TransitionParameter
         {
-            Move, Jump, ForceTransition, Grounded,
+            Move, Jump, ForceTransition, Grounded, Attack
         }
 
         // Since this is 2.5d we are going to mainly playing around "y" axis. 0 means we are going forward --> 180 means we are going backwards <--
