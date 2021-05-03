@@ -49,7 +49,8 @@ namespace Moonrider
         {
             if (!CheckFront(control))
             {
-                control.transform.Translate(Vector3.forward * Speed * SpeedGraph.Evaluate(stateInfo.normalizedTime) * Time.deltaTime);
+				control.MoveForward(Speed, SpeedGraph.Evaluate(stateInfo.normalizedTime));
+                
             }
         }
 
@@ -77,9 +78,9 @@ namespace Moonrider
                 // However, it will not work here, because this script has no access to the game object. Instead use this ->
                 if (!CheckFront(control)) // we only wanna move when CheckFront is false -> when there is nothing in front
                 {
-                    control.transform.Translate(Vector3.forward * Speed * SpeedGraph.Evaluate(stateInfo.normalizedTime) * Time.deltaTime);
+					control.MoveForward(Speed, SpeedGraph.Evaluate(stateInfo.normalizedTime));
 
-                }
+				}
 
 
 
@@ -90,10 +91,10 @@ namespace Moonrider
                 control.transform.rotation = Quaternion.Euler(0f, 180f, 0f); // Character turns (rotates) toward the running direction
                 if (!CheckFront(control))
                 {
-                    control.transform.Translate(Vector3.forward * Speed * SpeedGraph.Evaluate(stateInfo.normalizedTime) * Time.deltaTime); // the script is attached to this game object -> will move backwards.
+					control.MoveForward(Speed, SpeedGraph.Evaluate(stateInfo.normalizedTime));
 
 
-                }
+				}
             }
         }
 

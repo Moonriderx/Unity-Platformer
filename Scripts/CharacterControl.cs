@@ -4,58 +4,106 @@ using UnityEngine;
 namespace Moonrider
 {
 
-    public class CharacterControl : MonoBehaviour
-    {
+	public class CharacterControl : MonoBehaviour
+	{
 
-        public Animator animator;
-        public Material material;
-        public bool moveRight;
-        public bool moveLeft;
-        public bool Jump;
-        public bool Attack;
-        public GameObject ColliderEdgePrefab;
-        public List<GameObject> BottomSpheres = new List<GameObject>(); // The list will hold the game objects bottomsphere. We will use them for Ground Detection
-        public List<GameObject> FrontSpheres = new List<GameObject>(); // Front Spheres info list
-        public List<Collider> RagdollParts = new List<Collider>(); // we put all the ragdoll parts into the list
+		public Animator SkinnedMeshAnimator;
+		public Material material;
+		public bool moveRight;
+		public bool moveLeft;
+		public bool Jump;
+		public bool Attack;
+		public GameObject ColliderEdgePrefab;
+		public List<GameObject> BottomSpheres = new List<GameObject>(); // The list will hold the game objects bottomsphere. We will use them for Ground Detection
+		public List<GameObject> FrontSpheres = new List<GameObject>(); // Front Spheres info list
+		public List<Collider> RagdollParts = new List<Collider>(); // we put all the ragdoll parts into the list
+		public List<Collider> CollidingParts = new List<Collider>(); // store all the character body parts that comes in contact
 
-        public float GravityMultiplier;
-        public float PullMultiplier;
+		public float GravityMultiplier;
+		public float PullMultiplier;
 
-        private Rigidbody rigid;
-        public Rigidbody RIGID_BODY
-
-            
-        {
-            get
-            {
-                if (rigid == null)
-                {
-                    rigid = GetComponent<Rigidbody>();
-                }
-                return rigid;
-            }
-        }
-        public enum TransitionParameter
-        {
-            Move, Jump, ForceTransition, Grounded, Attack
-        }
-
-        // Since this is 2.5d we are going to mainly playing around "y" axis. 0 means we are going forward --> 180 means we are going backwards <--
+		private Rigidbody rigid;
+		public Rigidbody RIGID_BODY
 
 
-        private void Awake() // as soon as the game starts look for the box collider on the character controller
-        {
-            SetRagdollParts();
-            SetColliderSphere();
-        }
+		{
+			get
+			{
+				if (rigid == null)
+				{
+					rigid = GetComponent<Rigidbody>();
+				}
+				return rigid;
+			}
+		}
+		public enum TransitionParameter
+		{
+			Move, Jump, ForceTransition, Grounded, Attack
+		}
 
-        /*private IEnumerator Start() // Only for testing purposes
+		// Since this is 2.5d we are going to mainly playing around "y" axis. 0 means we are going forward --> 180 means we are going backwards <--
+
+
+		private void Awake() // as soon as the game starts look for the box collider on the character controller
+		{
+			bool SwitchBack = false;
+			if (!IsFacingForward())
+			{
+				SwitchBack = true;
+			}
+			FaceForward(true);
+			SetRagdollParts();
+			SetColliderSphere();
+
+			if (SwitchBack)
+			{
+				FaceForward(false);
+			}
+		}
+
+		/*private IEnumerator Start() // Only for testing purposes
         {
             yield return new WaitForSeconds(5f);
             RIGID_BODY.AddForce(200f * Vector3.up);
             yield return new WaitForSeconds(0.5f);
             TurnOnRagdoll();
         }*/
+
+		private void OnTriggerEnter(Collider col)
+		{
+			if (RagdollParts.Contains(col))
+			{
+				return;
+			}
+
+			CharacterControl control = col.transform.root.GetComponent<CharacterControl>();
+
+			if (control == null) // it means that it is physical object, not the player itself
+			{
+				return;
+			}
+
+			if (col.gameObject == control.gameObject)
+			{
+				return;
+			}
+
+			// after passing all this checks, we know that the collider is a body part from another player
+
+			if (!CollidingParts.Contains(col))
+			{
+				CollidingParts.Add(col);
+			}
+		}
+		private void OnTriggerExit(Collider col)
+		{
+			if (CollidingParts.Contains(col))
+			{
+				CollidingParts.Remove(col);
+			}
+		}
+
+		
 
         private void SetRagdollParts()
         {
@@ -78,8 +126,8 @@ namespace Moonrider
             RIGID_BODY.velocity = Vector3.zero;
 
             this.gameObject.GetComponent<BoxCollider>().enabled = false;
-            animator.enabled = false;
-            animator.avatar = null;
+            SkinnedMeshAnimator.enabled = false;
+            SkinnedMeshAnimator.avatar = null;
 
             foreach(Collider c in RagdollParts)
             {
@@ -87,6 +135,7 @@ namespace Moonrider
                 c.attachedRigidbody.velocity = Vector3.zero;
             }
         }
+
 
 
         private void SetColliderSphere()
@@ -172,5 +221,38 @@ namespace Moonrider
             }
         }
 
-    }
+		public void MoveForward(float Speed, float SpeedGraph)
+		{
+			transform.Translate(Vector3.forward * Speed * SpeedGraph * Time.deltaTime);
+
+		}
+
+		public void FaceForward(bool forward)
+		{
+			if (forward)
+			{
+				transform.rotation = Quaternion.Euler(0f, 0f, 0f); // we wanna character to turn forward
+			}
+			else
+			{
+				transform.rotation = Quaternion.Euler(0f, 180f, 0f);
+			}
+		}
+
+		public bool IsFacingForward()
+		{
+			if (transform.forward.z > 0f) // that mean the character is facing the correct side
+			{
+				return true;
+			}
+			else
+			{
+				return false;
+			}
+
+		}
+
+
+
+	}
 }
