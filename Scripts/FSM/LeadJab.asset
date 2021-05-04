@@ -12,3 +12,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6d1bacee770582547a8c55fbf26e4a21, type: 3}
   m_Name: LeadJab
   m_EditorClassIdentifier: 
+  StartAttackTime: 0.2
+  EndAttackTime: 0.3
+  ColliderNames:
+  - LeftHand
+  MustCollide: 1
+  MustFaceAttacker: 0
+  LethalRange: 0
+  MaxHits: 1
+  DeathAnimators: []
