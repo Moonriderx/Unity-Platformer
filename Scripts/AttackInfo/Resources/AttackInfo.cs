@@ -18,19 +18,20 @@ namespace Moonrider
 		public bool isRegistered;
 		public bool isFinished;
 
-		public void ResetInfo(Attack attack)
+		public void ResetInfo(Attack attack, CharacterControl attacker)
 		{
 			isRegistered = false; // when attack first beggins it won't be registered
 			isFinished = false;
 			AttackAbility = attack;
+			Attacker = attacker;
 
 		}
 
 
-		public void Register(Attack attack, CharacterControl attacker)
+		public void Register(Attack attack)
 		{
 			isRegistered = true;
-			Attacker = attacker;
+			
 
 			AttackAbility = attack;
 			ColliderNames = attack.ColliderNames;

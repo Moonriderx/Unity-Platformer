@@ -69,40 +69,7 @@ namespace Moonrider
             TurnOnRagdoll();
         }*/
 
-		private void OnTriggerEnter(Collider col)
-		{
-			if (RagdollParts.Contains(col))
-			{
-				return;
-			}
-
-			CharacterControl control = col.transform.root.GetComponent<CharacterControl>();
-
-			if (control == null) // it means that it is physical object, not the player itself
-			{
-				return;
-			}
-
-			if (col.gameObject == control.gameObject)
-			{
-				return;
-			}
-
-			// after passing all this checks, we know that the collider is a body part from another player
-
-			if (!CollidingParts.Contains(col))
-			{
-				CollidingParts.Add(col);
-			}
-		}
-		private void OnTriggerExit(Collider col)
-		{
-			if (CollidingParts.Contains(col))
-			{
-				CollidingParts.Remove(col);
-			}
-		}
-
+		
 		
 
         private void SetRagdollParts()
@@ -115,6 +82,7 @@ namespace Moonrider
                 {
                     c.isTrigger = true; // it means the collider will not be a physical object anymore (we turn the collider into a trigger)
                     RagdollParts.Add(c); // add the parts in to the list
+					c.gameObject.AddComponent<TriggerDetector>(); // for each of the body parts add the trigger component
                 }
             }
 

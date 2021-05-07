@@ -80,6 +80,9 @@ namespace Moonrider
 			Debug.Log(info.Attacker.gameObject.name + " hits: " + this.gameObject.name);
 			control.SkinnedMeshAnimator.runtimeAnimatorController = info.AttackAbility.GetDeathAnimator();
 			info.CurrentHints++;
+
+			control.GetComponent<BoxCollider>().enabled = false;
+			control.RIGID_BODY.useGravity = false;
 		}
 	}
 

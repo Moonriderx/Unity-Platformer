@@ -23,7 +23,7 @@ namespace Moonrider
 			GameObject obj = Instantiate(Resources.Load("AttackInfo", typeof(GameObject))) as GameObject; // instantiate the prefab
 			AttackInfo info = obj.GetComponent<AttackInfo>();
 
-			info.ResetInfo(this);
+			info.ResetInfo(this, characterState.GetCharacterControl(animator));
 
 			if (!AttackManager.Instance.CurrentAttacks.Contains(info)) // if that info is not included in attackManager
 			{
@@ -49,7 +49,7 @@ namespace Moonrider
 					}
 					if (!info.isRegistered && info.AttackAbility == this)
 					{
-						info.Register(this, characterState.GetCharacterControl(animator));
+						info.Register(this);
 					}
 				}
 			}
